@@ -1,100 +1,149 @@
-
 /*
-Experiment 13 : Represent a given grapg using adjacency matrix/list to perform DFS and using adjacency list to perform BFS. 
-                Use the map of the area around the college as a graph. Identify the prominent land marks as nodes and perform DFS and BFS on that.
-Adjacency Matrix : using adj matrix -BFS(Que)
+Represent a given graph using adjacency matrix/list to perform DFS and using adjacency 
+list to perform BFS. Use the map of the area around the college as the graph. Identify the 
+prominent land marks as nodes and perform DFS and BFS on that.
 */
 
 #include <iostream>
-#include <stdlib.h>
+#include <queue>
+#include <stack>
 using namespace std;
 
-int cost[10][10], i, j, k, n, qu[10], front=0, rear=0, v, visit[10], visited[10];
-int stk[10], top=0, visit1[10], visited1[10];
-
-int main()
+int main() 
 {
-    int m;
+	int n; 
+	char ch;
+	cout<<"No. of nodes: ";
+	cin>>n;
 
-    
-    cout << "Enter number of vertices : ";
-    cin >> n;
-    cout << "Enter number of edges : ";
-    cin >> m;
-    
-    cout << "\nEDGES :\n";
-    for (k = 1; k <= m; k++)
-    {
-        cin >> i >> j;
-        cost[i][j] = 1;
-        //cost[j][i] = 1;
-    }
-    
-    //display function
-    cout << "The adjacency matrix of the graph is : " << endl;
-    for (i = 1; i <= n; i++)
-    {
-        for (j = 1; j <= n; j++)
-        {
-            cout << " " << cost[i][j];
-        }
-        cout << endl;
-    }
-    
-    cout<<"The adjacency list is of the graph is: \n";
-    for (i=1;i<=n;i++)
-    {
-        cout<<i<<"-->";
-        for(j=1;j<=n;j++)
-        {
-            if(cost[i][j]==1)
-                cout<<j<<" ";
-        }
-        cout<<endl;
-    } 
-    //bfs
-    cout << "Enter initial vertex : ";
-    cin >> v;
-    cout << "The BFS of the Graph is\n";
-    cout << v<<endl;
-    visited[v] = 1;
-    k = 1;
-    while (k < n)
-    {
-        for (j = 1; j <= n; j++)
-            if (cost[v][j] != 0 && visited[j] != 1 && visit[j] != 1)
-            {
-                visit[j] = 1;
-                qu[rear++] = j;
-            }
-        v = qu[front++];
-        cout << v << " ";
-        k++;
-        visit[v] = 0;
-        visited[v] = 1;
-    }
-    //dfs
-    cout <<endl<<"Enter initial vertex : ";
-    cin >> v;
-    cout << "The DFS of the Graph is\n";
-    cout << v<<endl;
-    visited[v] = 1;
-    k = 1;
-    while (k < n)
-    {
-        for (j = n; j >= 1; j--)
-            if (cost[v][j] != 0 && visited1[j] != 1 && visit1[j] != 1)
-            {
-                visit1[j] = 1;
-                stk[top++] = j;
-               // top++;
-            }
-        v = stk[--top];
-        cout << v << " ";
-        k++;
-        visit1[v] = 0;
-        visited1[v] = 1;
-    }
+	string nodes[n];
 
-    return 0;
+	int adj_mat[n][n];
+
+	for(int i=0;i<n;i++) 
+	{
+		cout<<"Enter nodes: ";
+		cin>>nodes[i];
+	}
+	
+	for(int i=0;i<n;i++) 
+	{
+		for(int j=0;j<n;j++) 
+		{
+			cout<<"\nwhether there is edge between "<<nodes[i]<<" and "<<nodes[j]<<" ?\n(y/n): ";
+			cin>>ch;
+
+			if(ch=='y') 
+			{
+				adj_mat[i][j] = 1;
+			} 			
+			else 
+			{
+				adj_mat[i][j] = 0;
+			}
+		}
+	}
+	
+	cout<<"\n\nThe adjacent matrix is\n\t";
+	
+	for(int i=0;i<n;i++) 
+	cout<<nodes[i]<<"\t";
+	
+	cout<<endl;
+	for(int i=0;i<n;i++) 
+	{
+		cout<<nodes[i]<<"\t";
+		for(int j=0;j<n;j++)
+		{
+			cout<<adj_mat[i][j]<<"\t";
+		}
+		cout<<endl;
+	}
+	
+/*	cout<<"\n\nThe adjacency list is\n";
+	for(int i=0;i<n;i++) 
+	{
+		cout<<nodes[i];
+		for(int j=0;j<n;j++) 
+		{
+			if(adj_mat[i][j]==1) 
+			{
+				cout<<" --> "<<nodes[j];
+			}
+		}
+		cout<<endl;
+	}
+*/
+while(1) 
+	{	
+		int ch;
+		cout<<"* * * * Menu * * * *\n";
+		cout<<"\n1. BFS\n2. DFS\n3. Exit\nEnter your choice: ";
+		cin>>ch;
+
+		switch(ch) 
+		{
+			case 1:
+			{
+				int v;
+				bool visited[n+1] = {};   //array named visited
+				queue<int> q;
+				cout<<"Starting vertex for bfs traversal: ";
+				cin>>v;
+				cout<<"\nThe bfs traversal is ";
+				q.push(v);
+				visited[v] = 1;
+
+				while(!q.empty()) 
+				{
+					v = q.front();
+					cout<<v<<" -> ";
+					q.pop();
+					for(int k=1;k<=n;k++) 
+					{
+						if(adj_mat[v][k] && !visited[k]) 
+						{
+							q.push(k);
+							visited[k] = 1;
+						}
+					}
+				}
+				cout<<"\n\n";
+			}
+			break;		
+
+			case 2:		// dfs traversal - - - - - - - - - - - - - - - - -
+			{
+				int v;
+				bool visited[n+1] = {};
+				stack<int>s;
+				cout<<"Starting vertex for dfs traversal: ";
+				cin>>v;
+				cout<<"\nThe dfs traversal is ";
+				s.push(v);
+				visited[v] = 1;
+
+				while(!s.empty()) 
+				{
+					v=s.top();
+					cout<<v<<" -> ";
+					s.pop();
+					for(int k=1;k<=n;k++) 
+					{
+						if(adj_mat[v][k] && !visited[k]) 
+						{
+							s.push(k);
+							visited[k]=1;
+						}
+					}
+				}
+				cout<<"\n\n";
+			}
+			break;
+
+			case 3:		//Exit - - - - - - - - - - - - - - - - -
+			cout<<"\n\n";
+			return 0;
+		}
+	}
 }
