@@ -1,132 +1,69 @@
 /*
 Construct  an  expression  tree  from  the  given  prefix  expression  eg.  +--a*bc/def  and 
-traverse it using post order traversal (non recursive) and then delete the entire tree. */
+traverse it using post order traversal (non recursive) and then delete the entire tree. 
+*/
 
-#include<iostream>
-#include<stack>
+#include <iostream>
 using namespace std;
 
-struct node
+class node 
 {
-    char ch;
-    node *cL;
-    node *cR;
+public:
+    char data;
+    node* left, *right;
+    node() 
+	{
+        left = right = NULL;
+    }
 };
 
-class expression
+
+node* place_node(string st, int &i)    //not void 
 {
-    public:
-    char exp[20];
-    stack<node *>s1;
-    stack<node *>s3;
-    node *root;
-    void create();
-    void postoder();
-    void deltion();
+	node* ptr = new node();
+	ptr->data=st[i];    //pre order so the data is symblo 
+	
+	if(ptr->data=='+' || ptr->data=='-' || ptr->data=='*' || ptr->data=='/') 
+	{	
+		ptr->left = place_node(st,++i);  //increment
+		ptr->right = place_node(st,++i);   //increment
+	} 
+	else 
+	{
+		return ptr;
+	}
+	
+	return ptr;
+}
 
-};
-
-void expression::create()
+node* construct_ext(string st)   //not void 
 {
-    cout<<"\n enter the expression\n";
-    cin>>exp;
+	int i = 0; //at zeroth location their will be an operator
+	node* root = NULL;      // initial root
+	root = place_node(st,i);
+	return root;
+}
 
-    node *ch1,*ch2;
-    int i=0;
-	while(exp[i]!='\0')
-    {
-        i++;
+void ascending_order(node* ptr) 
+{
+    if (ptr == NULL)
+        return;
+    if(ptr->data=='+' || ptr->data=='-' || ptr->data=='*' || ptr->data=='/') 
+	{
+    	cout<<'(';
     }
-
-    while(i>=0)
-    {
-        if(exp[i]=='/' || exp[i]=='*' || exp[i]=='-' || exp[i]=='+')
-        {
-            ch1=s1.top();
-            s1.pop();
-            ch2=s1.top();
-            s1.pop();
-
-            node *nnode=new node;
-            nnode->ch=exp[i];
-            nnode->cL=ch1;
-            nnode->cR=ch2;
-            s1.push(nnode);
-
-        }
-        else
-        {
-            node *nnode=new node;
-            nnode->ch=exp[i];
-            nnode->cL=NULL;
-            nnode->cR=NULL;
-            s1.push(nnode);
-
-        }
-        i--;
+    ascending_order(ptr->left);
+    cout << ptr->data;
+    ascending_order(ptr->right);
+    if(ptr->data=='+' || ptr->data=='-' || ptr->data=='*' || ptr->data=='/') 
+	{
+    	cout<<')';
     }
 }
 
-void expression::postoder()
+int main() 
 {
-    
-      stack<node *>s2;
-    node *current;
-    root=s1.top();
-    while(!s1.empty())
-    {
-        current=s1.top();
-        s1.pop();
-        s2.push(current);
-        s3.push(current);
-
-        if(current->cL!=NULL)
-         {   s1.push(current->cL);
-         }
-        if(current->cR!=NULL)
-        {   
-            s1.push(current->cR);
-        }
-    }
-    
-    while(!s2.empty())
-    {
-        current=s2.top();
-        cout<<current->ch;
-        s2.pop();
-    }
-      
-}
-void expression:: deltion()
-{
-    root->cL=NULL;
-    root->cR=NULL;
-    root=NULL;
-}
-
-int main()
-{
-    expression  ob;
-    char c;
-    int n;
-        do{
-    	   
-        cout<<"\n 1.to create expression tree \n 2.non recursive postorder \n3.deletion of tree\n";
-        cout<<"\n enter your choice=";
-        cin>>n;
-        switch(n)
-        {
-            case 1:ob.create();
-                break;
-            case 2:ob.postoder();
-                break;  
-            case 3:ob.deltion(); 
-                break;       
-            default:cout<<"invalid choice";
-        }
-      cout<<"\n do you want to continue: =";
-      cin>>c;
-    }while(c=='y');
-    return 0;
-    
+	node* root = construct_ext("+--a*bc/def");
+	ascending_order(root);
+	return 0;
 }
